@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("MANAGER")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  queues       Queue[]
+}
+
+model Queue {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  prefix      String   @default("Q")
+  tokenSeq    Int      @default(0)
+  isActive    Boolean  @default(true)
+  managerId   String
+  manager     User     @relation(fields: [managerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tokens      Token[]
+
+  @@index([managerId])
+}
+
+model Token {
+  id                 String    @id @default(uuid())
+  tokenNumber        String    // e.g. "Q-101", "VIP-002"
+  sequenceNum        Int
+  customerName       String
+  customerPhone      String?
+  customerEmail      String?
+  priority           String    @default("NORMAL") // "NORMAL", "PRIORITY", "VIP"
+  notes              String?
+  status             String    @default("WAITING") // "WAITING", "IN_SERVICE", "COMPLETED", "CANCELLED"
+  position           Int?      // Position in the waiting line (1 = top of queue; null once served/completed/cancelled)
+  counterName        String?   // e.g. "Counter 1", "Desk A"
+  queueId            String
+  queue              Queue     @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  createdAt          DateTime  @default(now())
+  servedAt           DateTime?
+  completedAt        DateTime?
+  cancelledAt        DateTime?
+  cancellationReason String?
+
+  @@index([queueId, status])
+  @@index([queueId, position])
+}
