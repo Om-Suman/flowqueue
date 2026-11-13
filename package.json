@@ -1,0 +1,27 @@
+{
+  "name": "queue-management-application",
+  "version": "1.0.0",
+  "description": "Production-ready Full Stack Queue Management System with Analytics and Real-time Controls",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client",
+    "build": "npm run build --prefix server && npm run build --prefix client",
+    "seed": "npm run seed --prefix server",
+    "start": "node server/dist/index.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  },
+  "keywords": [
+    "queue-management",
+    "full-stack",
+    "react",
+    "express",
+    "prisma",
+    "sqlite",
+    "typescript",
+    "analytics"
+  ],
+  "author": "FlowQueue Team",
+  "license": "MIT"
+}
